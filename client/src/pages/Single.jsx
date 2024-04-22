@@ -7,8 +7,11 @@ import Menu from '../components/Menu'
 import AvatarImg from '../img/bgImv4.png'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserInfo, setStatusUserInfoErrorNull } from '../features/user-info/userInfoSlice';
+import { setLoadImage, setLoadImageDefault } from '../features/single-image/singleImageSlice';
+import { userLogout } from '../features/auth-slice/authSlice'
 import { getSinglePost } from '../features/single-post-slice/singlePostSlice';
-import { deleteSinglePost } from '../features/delete-post-slice/deletePostSlice';
+import { deleteSinglePost, deletePostStatusNull } from '../features/delete-post-slice/deletePostSlice';
 import {Myimage} from '../components/Myimage'
 import { setNewPageZero, setNewCurrentPage } from '../features/posts-slice/postsSlice'
 import Info from '../components/Info'
@@ -18,11 +21,16 @@ import { setInfoReducer } from '../features/info-slice/infoSlice';
 
 const Single = () => {
   const dispatch = useDispatch();
+  const userinfo = useSelector((state) => state.userinfo.userinfo)
+  const singleimage = useSelector((state) => state.singleimage.loadimage)
+  const errormessage = useSelector((state) => state.userinfo.errormessage)
+  const statusdeletepost = useSelector((state) => state.deletesinglepost.status)
   const post = useSelector((state) => state.singlepost.post)
   const load = useSelector((state) => state.singlepost.load)
   const currentUser = useSelector((state) => state.user.currentUser)
   const avatar = post.userImg ? `${API_URL + post.userImg}` : AvatarImg
   const information = useSelector((state) => state.write.infoaboutaddorupdateapost)
+  const [postimage, setPostImage] = useState(false);
   const [info, setInfo] = useState('');
 
   const location = useLocation();
@@ -31,20 +39,47 @@ const Single = () => {
   const postId = location.pathname.split('/')[2]
 
   useEffect(() => {
+    if (JSON.parse(localStorage.getItem('user')) !== null && localStorage.getItem('token') !== null) {
+      dispatch(getUserInfo())
+    } 
+  }, [])
+
+  useEffect(() => {
+    if (errormessage !== null && errormessage === 'Not authenticated!') {
+      dispatch(userLogout())
+    } 
+    else {
+      if (userinfo !== null) {
+        const userinfoforlocal = JSON.stringify(userinfo)
+        JSON.stringify(localStorage.setItem('user', userinfoforlocal))
+      }
+      return () => {
+        dispatch(setStatusUserInfoErrorNull())
+      }
+    }
+  }, [userinfo, errormessage])
+
+  useEffect(() => {
     dispatch(getSinglePost(postId))
   }, [postId]);
 
-  const handleDelete = async() => {
+  useEffect(() => {
+    if (statusdeletepost === 'fulfilled') {
+      dispatch(setInfoReducer('deleted'))
+      navigate('/')
+    }
+    return () => {
+      dispatch(deletePostStatusNull())
+    }
+  }, [statusdeletepost])
+
+  const postDeleted = () => {
     dispatch(deleteSinglePost(postId))
-    dispatch(setInfoReducer('deleted'))
-    navigate('/')
   }
 
-  useEffect(() => {
-    return () => {
-      dispatch(setInfoReducer('deleted'))
-    }
-  }, [])
+  const handleDelete = async() => {
+    postDeleted()
+  }
 
   useEffect(() => {
       localStorage.setItem('starnewpage', 0)
@@ -66,6 +101,19 @@ const Single = () => {
       setInfo('')
     }
   }, [information])
+
+  useEffect(() => {
+    if (post?.xl !== '' && post?.xl !== null) {
+      setPostImage(false)
+    } else {
+      setPostImage(true)
+    }
+    return () => {
+      setPostImage(false)
+    }
+  }, [post])
+
+  console.log('postimage', postimage)
 
   if (info !== '') {
     return <Info info={info} />
@@ -115,6 +163,8 @@ const Single = () => {
             <div>
               <Myimage src={post?.xl} placeholderSrc={post?.sm} width='695.71' />
             </div>
+        {singleimage || postimage ?
+        <>
         <div className="user">
             <img id='avatar-img' src={avatar} alt="avatar" />
             <div className="info">
@@ -122,12 +172,15 @@ const Single = () => {
               <p>Posted {moment(post.date).fromNow()}</p>
             </div>
             {currentUser !== null ? currentUser.username === post?.username &&
-            (<div className="edit">
+            (
+            <div className="edit">
               <Link to={`/write?edit=${post.id}`} state={post}>
                 <img src={Edit} alt="" />
               </Link>
               <img onClick={handleDelete} src={Delete} alt="" />
-            </div>) : null}
+            </div>
+            )
+            : null}
         </div>
         <h1>{post.title}</h1>
         <div
@@ -136,6 +189,8 @@ const Single = () => {
           dangerouslySetInnerHTML={{__html: post.desc}}
           >
           </div>
+          </>
+          : null}
       </div>
       <Menu cat={post.cat} />
     </div>

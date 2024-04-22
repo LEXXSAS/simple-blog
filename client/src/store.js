@@ -11,10 +11,12 @@ import avatarSlice from './features/avatar-slice/avatarSlice'
 import userInfoSlice from './features/user-info/userInfoSlice'
 import infoSlice from './features/info-slice/infoSlice'
 import { dataApi } from './features/goodsApi'
+import singleImageSlice from './features/single-image/singleImageSlice'
 
 export const store = configureStore({
   reducer: {
     userinfo: userInfoSlice,
+    singleimage: singleImageSlice,
     info: infoSlice,
     post: postSlice,
     user: authSlice,

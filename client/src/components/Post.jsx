@@ -7,7 +7,7 @@ const Post = ({props}) => {
   const {post} = props;
 
   const { ref, inView } = useInView({
-    threshold: 0.5,
+    threshold: 0.15,
     triggerOnce: true,
   });
 
@@ -16,7 +16,7 @@ const Post = ({props}) => {
     <div className="img">
     {inView ?
     <Link className='link' to={`/post/${post.id}`}>
-      <Myimage src={post?.xl} placeholderSrc={post?.sm} width='396.6' height='400' />
+      <Myimage src={post?.md} placeholderSrc={post?.sm} width='396.6' height='400' />
     </Link>
     :
     <Link className='link' to={`/post/${post.id}`}>
@@ -28,12 +28,19 @@ const Post = ({props}) => {
       <Link className='link' to={`/post/${post.id}`}>
       <h1 id='home-title'>{post.title}</h1>
       </Link>
+        {`${post.desc}`.length > 100 ? <div
+        style={{flexGrow: '1'}}
+        id='home-desc'
+        dangerouslySetInnerHTML={{__html: (`${post.desc}`.substring(0, 500) + `...`)}}
+        >
+        </div>
+        :
         <div
         style={{flexGrow: '1'}}
         id='home-desc'
-        dangerouslySetInnerHTML={{__html: post.desc}}
+        dangerouslySetInnerHTML={{__html: (`${post.desc}`.substring(0, 500))}}
         >
-        </div>
+        </div>}
       <Link className='link' to={`/post/${post.id}`}>
       <button>Read more</button>
       </Link>

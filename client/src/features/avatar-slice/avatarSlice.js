@@ -10,11 +10,14 @@ const initialState = {
 
 export const uploadAvatarFile = createAsyncThunk('file/uploadFile', async(formData, {rejectWithValue, dispatch}) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/uploadavatar/avatar`, formData, {
+
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/uploadavatar/avatar`, formData, 
+      {
         withCredentials: true,
         headers: {
           Accept: "application/json",
-          "Content-Type":"multipart/form-data"
+          "Content-Type":"multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dispatch(setAvatarFile(res.data))

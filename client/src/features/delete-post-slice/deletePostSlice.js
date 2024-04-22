@@ -11,8 +11,15 @@ const initialState = {
 export const deleteSinglePost = createAsyncThunk('deleteload/getSinglePost', async(postId, {rejectWithValue, dispatch}) => {
   try {
     const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`,
-    {withCredentials: true}
-    )
+    {
+      withCredentials: true,
+      headers: {
+        Accept: "application/json",
+        "Content-Type":"multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    }
+  )
     dispatch(deletePost(res.data))
   } catch (err) {
     console.log(err)

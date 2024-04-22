@@ -36,6 +36,7 @@ export const singlePostSlice = createSlice({
     }),
     builder.addCase(getSinglePost.fulfilled, (state, action) => {
       state.status = 'fulfilled';
+      state.load = false
     })
   }
 })

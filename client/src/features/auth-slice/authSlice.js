@@ -15,7 +15,8 @@ export const userLogin = createAsyncThunk('currentUser/userLogin', async(inputs,
     const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`,
     inputs,
     {withCredentials: true});
-    dispatch(setUser(res.data))
+    localStorage.setItem('token', res.data?.accessToken)
+    dispatch(setUser(res.data?.userdata))
   } catch (error) {
     dispatch(setUserError(error.response.data))
   }
@@ -27,8 +28,9 @@ export const userLogout = createAsyncThunk('currentUser/userLogout', async(_, {r
     _,
     {withCredentials: true}
     );
-    dispatch(setUserNull(null))
+    localStorage.removeItem('token')
     localStorage.removeItem('user')
+    dispatch(setUserNull(null))
   } catch (err) {
     console.log(err)
   }

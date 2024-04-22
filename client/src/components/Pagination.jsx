@@ -8,13 +8,14 @@ export const Pagination = ({totalPosts, postsPerPages, setCurrentPage, currentPa
   const allPages = React.useMemo(() => {
   let pages = [];
 
-  if (totalPosts.length !== 0) {
-    // console.log('count / postdata =' ,Math.ceil(totalPosts/postsPerPages))
-    for (let i = 1; i <= Math.ceil(totalPosts/postsPerPages); i++) {
-      pages.push(i)
-    }
+  if (totalPosts !== null) {
+    if (totalPosts.length !== 0) {
+      for (let i = 1; i <= Math.ceil(totalPosts/postsPerPages); i++) {
+        pages.push(i)
+      }
+    }  
   }
-
+  
   return pages;
   }, [totalPosts])
 

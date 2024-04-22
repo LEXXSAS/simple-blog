@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setNewPageZero, setNewCurrentPage } from '../features/posts-slice/postsSlice';
 import { getCount } from '../features/count-slice/countSlice';
+import { getUserInfo, setStatusUserInfoErrorNull, setUserInfoNull } from '../features/user-info/userInfoSlice';
+import { userLogout } from '../features/auth-slice/authSlice'
 import { setStatusFileUpload } from '../features/avatar-slice/avatarSlice';
 import Post from '../components/Post';
 import {useGetDataQuery, useUpdateDataMutation} from '../features/goodsApi.js'
@@ -47,7 +49,7 @@ const notifypostdeleted = (info) => toast.custom(<div
     <div>{info}</div>
   </div>,
   {
-  duration: 4000,
+  duration: 2500,
   position: 'top-center'
 });
 
@@ -57,7 +59,7 @@ const notifypostupdated = (info) => toast.custom(<div
     <div>{info}</div>
   </div>,
   {
-  duration: 4000,
+  duration: 2500,
   position: 'top-center'
 });
 
@@ -67,7 +69,7 @@ const notifypostcreated = (info) => toast.custom(<div
     <div>{info}</div>
   </div>,
   {
-  duration: 4000,
+  duration: 2500,
   position: 'top-center',
   icon: '✅',
   style: {
@@ -80,6 +82,10 @@ export const Home = () => {
   const count = useSelector((state) => state.countpages.count)
   const currentUser = useSelector((state) => state.user.currentUser)
   const info = useSelector((state) => state.info.info)
+  const userinfo = useSelector((state) => state.userinfo.userinfo)
+  const errormessage = useSelector((state) => state.userinfo.errormessage)
+  // const [userinfolocal, setUserInfoLocal] = useState(JSON.parse(localStorage.getItem('user')) || null)
+  // const [token, setToken] = useState(localStorage.getItem('token') || null)
   const [postdata, setPosData] = useState([]);
   const [pagecount, setPageCount] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -91,9 +97,21 @@ export const Home = () => {
   const [updateData] = useUpdateDataMutation()
 
   useEffect(() => {
-    if (isSuccess) {
+    if (JSON.parse(localStorage.getItem('user')) !== null || localStorage.getItem('token') !== null) {
+        dispatch(getUserInfo())
+    } return () => {
+      dispatch(setStatusUserInfoErrorNull())
     }
-  }, [data])
+  }, [])
+  
+  useEffect(() => {
+    if (errormessage !== null && errormessage === 'Not authenticated!') {
+      dispatch(userLogout())
+    } 
+    return () => {
+      dispatch(setStatusUserInfoErrorNull())
+    }
+  }, [userinfo, errormessage])
 
   useEffect(() => {
     console.log('%cinfo =>', 'color: #52eec29a', info)

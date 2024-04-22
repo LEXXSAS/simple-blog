@@ -2,6 +2,8 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react'
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLoadImage, setLoadImageDefault } from '../features/single-image/singleImageSlice';
 
 export const Myimage = ({
   src,
@@ -10,6 +12,7 @@ export const Myimage = ({
   ...props
 }) => {
 
+  const dispatch = useDispatch();
   const [imageSrc, setImageSrc] = useState(placeholderSrc);
 
   const cn = `progressive ${imageSrc === placeholderSrc ? "loading" : "loaded"}`
@@ -19,6 +22,9 @@ export const Myimage = ({
     img.src = src;
     img.onload = () => {
         setImageSrc(src)
+        setTimeout(() => {
+          dispatch(setLoadImage())
+        }, 10)
     }
   }, [src])
   

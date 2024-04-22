@@ -271,12 +271,12 @@ h1 {
 
     footer {
       margin-top: 100px;
+      gap: 10px;
       padding: 20px;
       background-color: $lightGreen;
       display: flex;
-      align-items: center;
-      justify-content: center;
       justify-content: space-between;
+      align-items: center;
       img {
         height: 50px;
       }
@@ -288,6 +288,7 @@ h1 {
       min-height: calc(100vh - 70px);
       #home-desc {
         line-height: 1.4;
+        text-align: justify;
       }
       #home-title {
         margin-bottom: 0.5rem;
@@ -301,6 +302,10 @@ h1 {
         .post {
           display: flex;
           gap: 100px;
+
+          button {
+            margin-top: 1rem;
+          }
 
           &:nth-child(2n+1) {
             flex-direction: row-reverse;
@@ -394,7 +399,6 @@ h1 {
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
-            // object-fit: cover;
           }
           span {
             font-weight: bold;
@@ -418,7 +422,7 @@ h1 {
         }
 
         p {
-          text-align: justify;
+          text-align: start;
           line-height: 30px;
         }
       }
@@ -1023,6 +1027,15 @@ h1 {
   }
 }
 @media (max-width: 418px) {
+  .single {
+    .info {
+      width: 110px;
+
+      p {
+        font-size: smaller;
+      }
+    }
+  }
   .information-text {
     font-size: 0.9rem;
   }
@@ -1091,5 +1104,9 @@ h1 {
   }
   .app .container .auth form {
     width: 100%;
+  }
+  .app .container .single .content p {
+    text-align: left;
+    line-height: 25px;
   }
 }

@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { setAvatarFile, uploadAvatarFile } from '../features/avatar-slice/avatarSlice';
-import { getUserInfo } from '../features/user-info/userInfoSlice';
+import { getUserInfo, setStatusUserInfoErrorNull } from '../features/user-info/userInfoSlice';
+import { userLogout } from '../features/auth-slice/authSlice'
 import AvatarImg from '../img/bgImv4.png'
 import {API_URL} from '../config'
 import { useNavigate } from 'react-router-dom';
@@ -47,22 +48,41 @@ const Profile = () => {
   const [file, setFile] = React.useState(null);
   const [imageUrl, setImageUrl] = React.useState(null);
 
+  
   useEffect(() => {
-    if (JSON.parse(localStorage.getItem('user')) !== null) {
-      dispatch(getUserInfo())
+    if (JSON.parse(localStorage.getItem('user')) !== null || localStorage.getItem('token') !== null) {
+        dispatch(getUserInfo())
+    } return () => {
+      dispatch(setStatusUserInfoErrorNull())
     }
-  }, [])
-
+  }, [ava])
+  
   useEffect(() => {
     if (errormessage !== null && errormessage === 'Not authenticated!') {
       dispatch(userLogout())
-    } else {
+    }
+    else {
       if (userinfo !== null) {
         const userinfoforlocal = JSON.stringify(userinfo)
         JSON.stringify(localStorage.setItem('user', userinfoforlocal))
       }
     }
-  }, [userinfo])
+    return () => {
+      dispatch(setStatusUserInfoErrorNull())
+    }
+  }, [userinfo, errormessage])
+
+  // useEffect(() => {
+  //   if (errormessage !== null && errormessage === 'Not authenticated!' || localStorage.getItem('token') === null) {
+  //     dispatch(userLogout())
+  //   } 
+  //   else {
+  //     if (userinfo !== null) {
+  //       const userinfoforlocal = JSON.stringify(userinfo)
+  //       JSON.stringify(localStorage.setItem('user', userinfoforlocal))
+  //     }
+  //   }
+  // }, [userinfo, errormessage])
 
   const navigate = useNavigate();
 

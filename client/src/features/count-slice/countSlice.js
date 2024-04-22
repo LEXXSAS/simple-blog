@@ -13,7 +13,8 @@ export const getCount = createAsyncThunk('count/getCount', async(cat, {rejectWit
       if (cat !== '') {
         cat = cat.split('=')[1];
       } 
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/count?cat=${cat}`)
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts/count?cat=${cat}`, {
+      })
 
       dispatch(setCount(res.data.count))
       dispatch(setCountAllPages(res.data.pages))

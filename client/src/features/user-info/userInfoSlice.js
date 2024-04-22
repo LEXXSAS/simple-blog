@@ -11,13 +11,18 @@ const initialState = {
 
 export const getUserInfo = createAsyncThunk('user/getUserInfo', async(_, {rejectWithValue, dispatch}) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/userinfo`, _, {
-        withCredentials: true
-      })
-      dispatch(setUserInfo(res.data))
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/userinfo`, _,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}` || null
+        }
+      }
+    )
+      localStorage.setItem('token', res.data?.accessToken)
+      dispatch(setUserInfo(res.data?.userdata))
     } catch (err) {
       dispatch(setStatusUserInfoError(err?.response?.data))
-      // console.log(err)
     }
 })
 
@@ -29,11 +34,17 @@ export const userInfoSlice = createSlice({
       state.userinfo = action.payload
       state.load = false
     },
+    setUserInfoNull: (state, action) => {
+      state.userinfo = null
+    },
     setStatusUserInfoNull: (state, action) => {
       state.statusloading = 'uninitialized'
     },
     setStatusUserInfoError: (state, action) => {
-      state.errormessage= action.payload
+      state.errormessage = action.payload
+    },
+    setStatusUserInfoErrorNull: (state, action) => {
+      state.errormessage = null
     },
   },
   extraReducers: (builder) => {
@@ -47,5 +58,5 @@ export const userInfoSlice = createSlice({
   }
 })
 
-export const {setUserInfo, setStatusUserInfoNull, setStatusUserInfoError} = userInfoSlice.actions;
+export const {setUserInfo, setStatusUserInfoNull, setStatusUserInfoError, setStatusUserInfoErrorNull, setUserInfoNull} = userInfoSlice.actions;
 export default userInfoSlice.reducer;

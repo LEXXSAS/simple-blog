@@ -23,7 +23,8 @@ export const uploadFile = createAsyncThunk('file/uploadFile', async(formData, {r
         withCredentials: true,
         headers: {
           Accept: "application/json",
-          "Content-Type":"multipart/form-data"
+          "Content-Type":"multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
       dispatch(setFile(res.data))
@@ -39,7 +40,16 @@ export const updatePost = createAsyncThunk('posts/updatePost', async(data, {reje
     desc,
     cat,
     img
-  }, {withCredentials: true})
+  },
+  {
+    withCredentials: true,
+    headers: {
+      Accept: "application/json",
+      "Content-Type":"multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  }
+)
 })
 
 export const writePost = createAsyncThunk('posts/writePost', async(data, {rejectWithValue, dispatch}) => {
@@ -50,7 +60,16 @@ export const writePost = createAsyncThunk('posts/writePost', async(data, {reject
     cat,
     img,
     date
-  },{withCredentials: true})
+  },
+  {
+    withCredentials: true,
+    headers: {
+      Accept: "application/json",
+      "Content-Type":"multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
+  }
+)
 })
 
 export const writeSlice = createSlice({

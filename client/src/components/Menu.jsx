@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setNewCurrentPage } from '../features/posts-slice/postsSlice';
 import { Myimage } from './Myimage';
@@ -10,12 +10,11 @@ import { getCount } from '../features/count-slice/countSlice';
 
 const Menu = ({cat}) => {
   const dispatch = useDispatch();
-  const post = useSelector((state) => state.singlepost.post)
   const [posts, setPosts] = useState([]);
   const [currentpage, setCurrentpage] = useState(Number(localStorage.getItem('menu_currentpage')));
   const [allMenuPages, setAllMenuPages] = useState(null);
   const [loading, setLoading] = useState(false);
-  const {data = [], error, isLoading, isError, isSuccess, isFetching, isUninitialized} = useGetCategegoryDataQuery({cat: cat, currentpage: currentpage - 1}, {skip: !loading});
+  const {data = [], error, isLoading, isError, isSuccess, isFetching, isUninitialized} = useGetCategegoryDataQuery({cat: cat, currentpage: currentpage - 1}, {skip: !loading, refetchOnMountOrArgChange: true});
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,7 +31,8 @@ const Menu = ({cat}) => {
 
 
   useEffect(() => {
-    if (Object.keys(data).length !==0) {
+    if (data.length !== 0) {
+      setLoading(true)
       setPosts(data.data)
       setAllMenuPages(data.pages)
     }

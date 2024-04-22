@@ -5,12 +5,16 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserInfo, setStatusUserInfoErrorNull } from '../features/user-info/userInfoSlice';
+import { userLogout } from '../features/auth-slice/authSlice'
 import { uploadFile, updatePost, writePost, setFileNull, setStatusFileUploadNull, setInformationNull, setInformation } from '../features/write-slice/writeSlice';
 import { setInfoReducer } from '../features/info-slice/infoSlice';
 import Info from '../components/Info';
 
 export const Write = () => {
   const dispatch = useDispatch();
+  const userinfo = useSelector((state) => state.userinfo.userinfo)
+  const errormessage = useSelector((state) => state.userinfo.errormessage)
   const fileUpload = useSelector((state) => state.write.file)
   const statusfileupload = useSelector((state) => state.write.statusfileupload)
   const information = useSelector((state) => state.write.infoaboutaddorupdateapost)
@@ -25,6 +29,41 @@ export const Write = () => {
   const [info, setInfo] = useState('');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem('user')) !== null || localStorage.getItem('token') !== null) {
+        dispatch(getUserInfo())
+    } return () => {
+      dispatch(setStatusUserInfoErrorNull())
+    }
+  }, [])
+  
+  useEffect(() => {
+    if (errormessage !== null && errormessage === 'Not authenticated!') {
+      dispatch(userLogout())
+    } 
+    return () => {
+      dispatch(setStatusUserInfoErrorNull())
+    }
+  }, [userinfo, errormessage])
+
+  // useEffect(() => {
+  //   if (JSON.parse(localStorage.getItem('user')) !== null && localStorage.getItem('token') !== null) {
+  //     dispatch(getUserInfo())
+  //   } 
+  // }, [])
+
+  // useEffect(() => {
+  //   if (errormessage !== null && errormessage === 'Not authenticated!' || localStorage.getItem('token') === null) {
+  //     dispatch(userLogout())
+  //     navigate('/')
+  //   } else {
+  //     if (userinfo !== null) {
+  //       const userinfoforlocal = JSON.stringify(userinfo)
+  //       JSON.stringify(localStorage.setItem('user', userinfoforlocal))
+  //     }
+  //   }
+  // }, [userinfo, errormessage])
   
   const upload = async() => {
     if (file !== null) {

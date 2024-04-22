@@ -17,9 +17,9 @@ class FileController {
 
   async uploadAvatar(req, res) {
     try {
-      const token = req.cookies.access_token;
+      const token = req.cookies.refresh_token
       if (!token) return res.status(401).json('Not authenticated!');
-      jwt.verify(token, process.env.SECRET_KEY, (err, userInfo) => {
+      jwt.verify(token, process.env.SECRET_KEY_REFRESH, (err, userInfo) => {
         if (err) return res.status(403).json("Token is not valid");
 
         const file = req.files.file

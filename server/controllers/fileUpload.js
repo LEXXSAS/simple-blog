@@ -8,7 +8,6 @@ class fileUpload {
       if (err) return res.status(403).json("Token is not valid");
   
       const newNameImg = req.body.img;
-      // const lgName =`/src/images/lg/${newNameImg}`
   
       const q = "UPDATE users SET `img`=? WHERE `id`=?"
   

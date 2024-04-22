@@ -38,22 +38,36 @@ let newNameImg;
 // ../client/src/images/lg/${newNameImg}
 // ../client/src/images/sm/${newNameImg}
 
+const sharpLgSm = async(fileImageName) => {
+  await sharp(`../client/src/images/lg/${fileImageName}`)
+  .jpeg({ quality: 30 })
+  .resize(500)
+  .toFile(`../client/src/images/sm/${fileImageName}`)
+  .then(() => {
+  });
+}
+
+const sharpMd = async(fileImageName) => {
+  await sharp(`../client/src/images/lg/${fileImageName}`)
+  .jpeg({ quality: 80 })
+  .resize(600)
+  .toFile(`../client/src/images/md/${fileImageName}`)
+  .then(() => {
+  });
+}
+
 const middleWareUploadFile = async(req, res, next) => {
-  const token = req.cookies.access_token;
+  const token = req.cookies.refresh_token
   if (!token) return res.status(401).json('Not authenticated!');
-  jwt.verify(token, process.env.SECRET_KEY, (err, userInfo) => {
+  jwt.verify(token, process.env.SECRET_KEY_REFRESH, (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid");
   });
 
   const file = req.files.file
   newNameImg = Date.now() + file.name
-  await file.mv('../client/dist/images/lg/' + newNameImg)
-  sharp(`../client/dist/images/lg/${newNameImg}`)
-  .jpeg({ quality: 30 })
-  .resize(500)
-  .toFile(`../client/dist/images/sm/${newNameImg}`)
-  .then(() => {
-  });
+  await file.mv('../client/src/images/lg/' + newNameImg)
+  sharpLgSm(newNameImg)
+  sharpMd(newNameImg)
   next()
 }
 
@@ -63,9 +77,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// app.use(express.static(path.join(__dirname, '../client/dist', 'index.html')));
-// console.log(path.join(__dirname, '../client/dist', 'index.html'));
 
 const arrayPath = ['/', '/register', '/login', '/profile', '/write', '/post/:id', ];
 
