@@ -5,6 +5,7 @@ import axios from "axios";
 const initialState = {
   status: 'uninitialized',
   count: null,
+  countpagination: null,
   allpages: null
 }
 
@@ -30,6 +31,9 @@ export const countSlice = createSlice({
     setCount: (state, action) => {
       state.count = action.payload
     },
+    setCountPagination: (state, action) => {
+      state.countpagination = action.payload
+    },
     setCountAllPages: (state, action) => {
       state.allpages = action.payload
     },
@@ -44,5 +48,5 @@ export const countSlice = createSlice({
   }
 })
 
-export const {setCount, setCountAllPages} = countSlice.actions;
+export const {setCount, setCountAllPages, setCountPagination} = countSlice.actions;
 export default countSlice.reducer;
