@@ -147,7 +147,7 @@ export const Write = () => {
           <ReactQuill className='editor' theme="snow" value={value} onChange={setValue} />
         </div>
       </div>
-      <div className="menu">
+      <div className="write-menu">
         <div className="item">
           <h1>Publish</h1>
           <span>
