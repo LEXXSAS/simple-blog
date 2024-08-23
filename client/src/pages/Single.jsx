@@ -38,6 +38,14 @@ const Single = () => {
 
   const postId = location.pathname.split('/')[2]
 
+  function ScrollToTopOnMount() {
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
+    return null;
+  }
+
   useEffect(() => {
     if (JSON.parse(localStorage.getItem('user')) !== null && localStorage.getItem('token') !== null) {
       dispatch(getUserInfo())
@@ -159,6 +167,7 @@ const Single = () => {
 
   return (
     <div className='single'>
+      <ScrollToTopOnMount />
       <div className="content">
             <div>
               <Myimage src={post?.xl} placeholderSrc={post?.sm} width='695.71' />
