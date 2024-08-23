@@ -96,6 +96,14 @@ export const Home = () => {
   const statuspostdeleted = useSelector((state) => state.deletesinglepost.status)
   const [updateData] = useUpdateDataMutation()
 
+  function ScrollToTopOnMount() {
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
+    return null;
+  }
+  
   useEffect(() => {
     if (JSON.parse(localStorage.getItem('user')) !== null || localStorage.getItem('token') !== null) {
         dispatch(getUserInfo())
@@ -246,6 +254,7 @@ export const Home = () => {
   return (
     <>
     <div className='home'>
+      <ScrollToTopOnMount />
       <Toaster />
       <div className="posts">
         {data.data && data.data.map(post => (
